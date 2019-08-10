@@ -272,3 +272,132 @@ ENV myCat fluffy
 
 ## ADD
 
+```sh
+ADD [--chown=<user>:<group>] <src>... <dest>
+ADD [--chown=<user>:<group>] ["<src>",... "<dest>"] (this form is required for paths containing whitespace)
+```
+ADD 函数用来拷贝新的文件，文件夹，或者远程文件。从scr 拷贝到image的路径中。
+```sh
+ADD hom* /mydir/        # adds all files starting with "hom"
+ADD hom?.txt /mydir/    # ? is replaced with any single character, e.g., "home.txt"
+```
+
+dest 是绝对路径或者是相对与 workdir 路径
+```sh
+ADD test relativeDir/          # adds "test" to `WORKDIR`/relativeDir/
+ADD test /absoluteDir/         # adds "test" to /absoluteDir/
+```
+拷贝arr[0].txt到/mydir
+```sh
+ADD arr[[]0].txt /mydir/    # copy a file named "arr[0].txt" to /mydir/
+```
+拷贝的文件默认的UID/GID为0. 
+```sh
+ADD --chown=55:mygroup files* /somedir/
+ADD --chown=bin files* /somedir/
+ADD --chown=1 files* /somedir/
+ADD --chown=10:11 files* /somedir/
+```
+
+* 文件从远程目录拷贝到系统到的文件权限是600.
+
+## COPY
+```sh
+COPY [--chown=<user>:<group>] <src>... <dest>
+COPY [--chown=<user>:<group>] ["<src>",... "<dest>"] (this form is required for paths containing whitespace)
+```
+复制文件和文件夹从scr到dest 文件中。
+拷贝的时候使用通配符。
+```sh
+COPY hom* /mydir/        # adds all files starting with "hom"
+COPY hom?.txt /mydir/    # ? is replaced with any single character, e.g., "home.txt"
+```
+拷贝文件到相对到WORKDIR 或者绝对路径。
+```sh
+COPY test relativeDir/   # adds "test" to `WORKDIR`/relativeDir/
+COPY test /absoluteDir/  # adds "test" to /absoluteDir/
+```
+拷贝有特殊名字到文件。例如arr[0].txt
+```sh
+COPY arr[[]0].txt /mydir/    # copy a file named "arr[0].txt" to /mydir/
+```
+拷贝文件通过特殊到用户。
+```sh
+COPY --chown=55:mygroup files* /somedir/
+COPY --chown=bin files* /somedir/
+COPY --chown=1 files* /somedir/
+COPY --chown=10:11 files* /somedir/
+```
+
+## ENTRYPOINT
+两种形式：
+```sh
+ENTRYPOINT ["executable", "param1", "param2"] (exec form, preferred)
+ENTRYPOINT command param1 param2 (shell form)
+```
+entrypoint 允许用户配置容器，使容器变得可执行。
+例如：启动 nginx 监听 80端口。
+```sh
+docker run -i -t --rm -p 80:80 nginx
+```
+命令行参数docker run <image> 将会将exec的元素添加到 ENTRYPOINT 中执行。docker run <image> -d 将会把 -d 的参数传给 entry point.用户可以越过 ENTRYPOINT, docker run --entrypoint 标签。
+Exec form ENTRYPOINT example
+
+```sh
+FROM ubuntu
+ENTRYPOINT ["top", "-b"]
+CMD ["-c"]
+```
+当你允许容器的时候，可以看到top是唯一运行的进程。
+```sh
+$ docker run -it --rm --name test  top -H
+top - 08:25:00 up  7:27,  0 users,  load average: 0.00, 0.01, 0.05
+Threads:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.1 us,  0.1 sy,  0.0 ni, 99.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   2056668 total,  1616832 used,   439836 free,    99352 buffers
+KiB Swap:  1441840 total,        0 used,  1441840 free.  1324440 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+    1 root      20   0   19744   2336   2080 R  0.0  0.1   0:00.04 top
+```
+为了更进一步验证结果。可以使用docker exec:
+```sh
+$ docker exec -it test ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  2.6  0.1  19752  2352 ?        Ss+  08:24   0:00 top -b -H
+root         7  0.0  0.1  15572  2164 ?        R+   08:25   0:00 ps aux
+```
+我们可以通过 docker stop test 来停止 top 命令。
+下面的 Dockerfile 使用 ENTRYPOINT 来运行 Apache.（提前运行，PID 1）
+```sh
+FROM debian:stable
+RUN apt-get update && apt-get install -y --force-yes apache2
+EXPOSE 80 443
+VOLUME ["/var/www", "/var/log/apache2", "/etc/apache2"]
+ENTRYPOINT ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+```
+
+如果需要写一个启动脚本，你可以确定最后可执行。可以接收Unix signals 通过使用 exec 和 gosu.
+```sh
+#!/usr/bin/env bash
+set -e
+
+if [ "$1" = 'postgres' ]; then
+    chown -R postgres "$PGDATA"
+
+    if [ -z "$(ls -A "$PGDATA")" ]; then
+        gosu postgres initdb
+    fi
+
+    exec gosu postgres "$@"
+fi
+
+exec "$@"
+``
+
+
+ 
+
+
+
+
