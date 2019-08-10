@@ -127,4 +127,148 @@ Successfully built 01c7f3bef04f
 PS C:\John>
 ```
 
+## 环境变量的替换
+
+环境变量（使用 'ENV' 来声明）。在dockerfile中一般用 '$variable_name','${variable_name}'。加括号是解决'${foo}_bar'.
+```sh
+FROM busybox
+ENV foo /bar
+WORKDIR ${foo}   # WORKDIR /bar
+ADD . $foo       # ADD . /bar
+COPY \$foo /quux # COPY $foo /quux
+```
+环境变量可以用在下面的instructions.
+**ADD**
+**COPY**
+**ENV**
+**EXPOSE**
+**FROM**
+**LABEL**
+**STOPSIGNAL**
+**USER**
+**VOLUME**
+**WORKDIR**
+
+```sh
+ENV abc=hello
+ENV abc=bye def=$abc
+ENV ghi=$abc
+```
+
+## .dockerignore file
+.dockerignore
+```sh
+# comment
+*/temp*
+*/*/temp*
+temp?
+```
+
+## FROM 命令
+**语法**
+```sh
+FROM <image> [AS <name>]
+#Or
+FROM <image>[:<tag>] [AS <name>]
+#Or
+FROM <image>[@<digest>] [AS <name>]
+```
+FROM 命令支持使用 ARG（在from 之前） 命令。
+```sh
+ARG  CODE_VERSION=latest
+FROM base:${CODE_VERSION}
+CMD  /code/run-app
+
+FROM extras:${CODE_VERSION}
+CMD  /code/run-extras
+```
+ARG 在执行完一次FROM 就bueng。如果需要再用，就需要再次声明。
+```sh
+ARG VERSION=latest
+FROM busybox:$VERSION
+ARG VERSION
+RUN echo $VERSION > image_version
+```
+
+## RUN
+RUN <command> (shell form, the command is run in a shell, which by default is /bin/sh -c on Linux or cmd /S /C on Windows)
+RUN ["executable", "param1", "param2"] (exec form)
+
+```sh
+RUN /bin/bash -c 'source $HOME/.bashrc; \
+echo $HOME'
+```
+```sh
+RUN /bin/bash -c 'source $HOME/.bashrc; echo $HOME'
+```
+## CMD
+CMD ["executable","param1","param2"] (exec form, this is the preferred form)
+CMD ["param1","param2"] (as default parameters to ENTRYPOINT)
+CMD command param1 param2 (shell form)
+```sh
+FROM ubuntu
+CMD echo "This is a test." | wc -
+```
+```sh
+FROM ubuntu
+CMD ["/usr/bin/wc","--help"]
+```
+
+## LABEL
+LABEL <key>=<value> <key>=<value> <key>=<value> ...
+```sh
+LABEL "com.example.vendor"="ACME Incorporated"
+LABEL com.example.label-with-value="foo"
+LABEL version="1.0"
+LABEL description="This text illustrates \
+that label-values can span multiple lines."
+```
+
+```sh
+LABEL multi.label1="value1" multi.label2="value2" other="value3"
+
+LABEL multi.label1="value1" \
+      multi.label2="value2" \
+      other="value3"
+```
+docker inspect
+```sh
+"Labels": {
+    "com.example.vendor": "ACME Incorporated"
+    "com.example.label-with-value": "foo",
+    "version": "1.0",
+    "description": "This text illustrates that label-values can span multiple lines.",
+    "multi.label1": "value1",
+    "multi.label2": "value2",
+    "other": "value3"
+},
+```
+
+## EXPOSE
+EXPOSE <port> [<port>/<protocol>...]
+
+```sh
+EXPOSE 80/udp
+# To expose on both TCP and UDP, include two lines:
+EXPOSE 80/tcp
+EXPOSE 80/udp
+```
+```sh
+docker run -p 80:80/tcp -p 80:80/udp ...
+```
+
+## ENV
+ENV <key> <value>
+ENV <key>=<value> ...
+
+```sh
+ENV myName="John Doe" myDog=Rex\ The\ Dog \
+    myCat=fluffy
+# or
+ENV myName John Doe
+ENV myDog Rex The Dog
+ENV myCat fluffy
+```
+
+## ADD
 
