@@ -254,7 +254,7 @@ CMD ["/usr/bin/wc","--help"]
 
 如果用户在 docker run 指定了参数，那么它会覆盖掉原理默认的 CMD 。
 
-> NOte: 不要混淆 RUN with CMD 。 RUN 只是在跑一下命令，并 commits 结果；CMD 不会在 build 中执行任何命令，但是会在
+> NOte: 不要混淆 RUN with CMD 。 RUN 只是在跑一下命令，并 commits 结果；CMD 不会在 build 中执行任何命令，但是会在启动指定的容器时执行。
 
 ## LABEL
 LABEL <key>=<value> <key>=<value> <key>=<value> ...
