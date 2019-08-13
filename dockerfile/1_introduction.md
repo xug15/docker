@@ -509,4 +509,103 @@ CMD and ENTRYPOINT 都可以定义当运行容器当时候哪些命令可以运�
 |CMD [“p1_cmd”, “p2_cmd”]	|p1_cmd p2_cmd	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry p1_cmd p2_cmd|
 |CMD exec_cmd p1_cmd	|/bin/sh -c exec_cmd p1_cmd	|/bin/sh -c exec_entry p1_entry	exec_entry p1_entry |/bin/sh -c exec_cmd p1_cmd|
 
+> Note: 如果 CMD 是在底层的image被定义的，那么设置 ENTRYPOINT 将会重置 CMD 为空。在当前的场景下， CMD 必须在当前的image中被定义。
+
+## VOLUME
+```sh
+VOLUME ["/data"]
+```
+VOLUME 是创建一个有特别定义名字和标志它作为一个外部挂载挂载点。它可以是一个本地的主机或者是其他容器。它可以是一个  JSON array, VOLUME ["/var/log/"] 或者是文本 VOLUME /var/log or VOLUME /var/log /var/db 
+
+docker run 启动一个新创建的卷。它可以包括存在于特定位置中image，任意的数据
+```sh
+FROM ubuntu
+RUN mkdir /myvol
+RUN echo "hello world" > /myvol/greeting
+VOLUME /myvol
+```
+Dockerfile 将会产生一个image, docker run 创建一个新的挂载点在 /myvol 然后拷贝 greeting 到新到卷中。
+
+Notes about specifying volumes
+当在 Dockerfile 使用卷时，记住以下几点：
+
+* 1. 在 Volumes on Windows-based containers: 目标卷必须是：一个不存在的或者空的文件夹，不能在C：盘。之一。
+* 2. 在 Dockerfile 修改卷：如何修改数据发生在卷的声明之后，都会被忽略。
+* 3. JSON formatting: 双引号而不是单引号。
+* 4. 主机文件夹在容器运行的时候会被宣布。
+
+## USER
+```sh
+USER <user>[:<group>] or
+USER <UID>[:<GID>]
+```
+
+## WORKDIR
+```sh
+WORKDIR /path/to/workdir
+
+WORKDIR /a
+WORKDIR b
+WORKDIR c
+RUN pwd
+
+ENV DIRPATH /path
+WORKDIR $DIRPATH/$DIRNAME
+RUN pwd
+```
+
+## ARG
+
+
+```sh
+ARG <name>[=<default value>]
+```
+ARG 可以定义一些在 docker build 运行时，传递变量参数：--build-arg <varname>=<value> 。如何用户定义的参数在运行的时候没有给出，就会报错。
+```sh
+[Warning] One or more build-args [foo] were not consumed.
+```
+在 Dockerfile 中可以有多个 ARG。例子如下：
+```sh
+FROM busybox
+ARG user1=someuser
+ARG buildno=1
+...
+```
+
+**默认的值**
+```sh
+FROM busybox
+ARG user1=someuser
+ARG buildno=1
+...
+```
+如果运行的时候没有参数传入进来，那搭建就会使用默认的参数。
+
+**范围**
+ARG 变量的定义来自于 Dockerfile 中行，不是来自于用户在运行是命令行或者其他。
+```sh
+1 FROM busybox
+2 USER ${user:-some_user}
+3 ARG user
+4 USER $user
+...
+```
+用户通过下面使用：
+```sh
+$ docker build --build-arg user=what_user .
+```
+第二行的 USER 被赋值 some_user 。 同时在第三行被定义。 在4行 USER 被赋值 what_user 作为 user 来定义。优先级最高的是 ARG 。
+
+**使用 ARG 变量**
+可以使用 ARG or an ENV 来定义变量。 ENV 会优先于 ARG。
+```sh
+1 FROM ubuntu
+2 ARG CONT_IMG_VER
+3 ENV CONT_IMG_VER v1.0.0
+4 RUN echo $CONT_IMG_VER
+```
+
+```sh
+$ docker build --build-arg CONT_IMG_VER=v2.0.1 .
+```
 
