@@ -45,6 +45,7 @@ docker exec -it bioinfo_tsinghua bash
 
 ```
 docker run help
+
 |command | type|means |
 |-|-|-|
 |--name|  string|Assign a name to the container|
