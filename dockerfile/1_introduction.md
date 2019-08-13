@@ -394,9 +394,53 @@ fi
 
 exec "$@"
 ``
+最后，如果需要在关闭的时候做额外的清理，或者需要协调多个可执行的文件。你可能需要 ENTRYPOINT 脚本接收 unix 信号，传递信号，然后再做些事情。
 
+```sh
+#!/bin/sh
+# Note: I've written this using sh so it works in the busybox container too
 
+# USE the trap if you need to also do manual cleanup after the service is stopped,
+#     or need to start multiple services in the one container
+trap "echo TRAPed signal" HUP INT QUIT TERM
+
+# start service in background here
+/usr/sbin/apachectl start
+
+echo "[hit enter key to exit] or run 'docker stop <container>'"
+read
+
+# stop service and clean up here
+echo "stopping apache"
+/usr/sbin/apachectl stop
+
+echo "exited $0"
+```
+如果你运行image 是通过： docker run -it --rm -p 80:80 --name test apache 你可以通过 docker exec, or docker top 来进行测试。
  
+```sh
+$ docker exec -it test ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.1  0.0   4448   692 ?        Ss+  00:42   0:00 /bin/sh /run.sh 123 cmd cmd2
+root        19  0.0  0.2  71304  4440 ?        Ss   00:42   0:00 /usr/sbin/apache2 -k start
+www-data    20  0.2  0.2 360468  6004 ?        Sl   00:42   0:00 /usr/sbin/apache2 -k start
+www-data    21  0.2  0.2 360468  6000 ?        Sl   00:42   0:00 /usr/sbin/apache2 -k start
+root        81  0.0  0.1  15572  2140 ?        R+   00:44   0:00 ps aux
+$ docker top test
+PID                 USER                COMMAND
+10035               root                {run.sh} /bin/sh /run.sh 123 cmd cmd2
+10054               root                /usr/sbin/apache2 -k start
+10055               33                  /usr/sbin/apache2 -k start
+10056               33                  /usr/sbin/apache2 -k start
+$ /usr/bin/time docker stop test
+test
+real	0m 0.27s
+user	0m 0.03s
+sys	0m 0.03s
+```
+> Note:
+> * 你可以覆盖 ENTRYPOINT --entrypoint. 不过只能设置二进制来执行： exec
+> * 
 
 
 
