@@ -230,12 +230,21 @@ CMD command param1 param2 (shell form)
 ```
 在 Dockerfile 应该只有一个 CMD 。如果你有多个 CMD ，那么只有最有一个 CMD 会生效。
 **CMD 的意义在于对于可执行的容器提供一个默认功能。** 这些可执行的包括一个可执行的文件或者可以忽略可执行文件，但是必须指定一个 ENTRYPOINT 。
- 
 
+> Note:
+如果 CMD 被用来提供 ENTRYPOINT 默认参数， 那么 ENTRYPOINT 和 CMD 都必须使用  JSON array 
+> Note:
+使用  JSON array ， 所以必须使用双引号。
+> Note:
+不像 shell 脚本，  exec form 不会激活 命令 shell, 意味着正常的 shell 进程不会发生。RUN [ "echo", "$HOME" ] 无法正常运行，需要改为： RUN [ "sh", "-c", "echo $HOME" ] 
+
+当使用 shell or exec 格式， CMD 的命令会在运行 image  时运行。
+如果你使用 shell 格式 CMD, 那么 命令会通过 /bin/sh -c 来执行
 ```sh
 FROM ubuntu
 CMD echo "This is a test." | wc -
 ```
+
 ```sh
 FROM ubuntu
 CMD ["/usr/bin/wc","--help"]
