@@ -24,3 +24,30 @@ RUN apt update \
  && rm -r /var/lib/apt/lists/
 ```
 
+## bash
+```sh
+docker build -t xug15/bash:1.0.0 -f /Users/xugang/Documents/c-pycharm/docker_hw/a1.base/Dockfile /Users/xugang/Documents/c-pycharm/docker_hw/b1.bash
+```
+> -t 添加标签和版本信息
+> -f 指定 Docker 文件
+```sh
+xug15/bash                     1.0.0               9e3c1eb73917        10 minutes ago      266MB
+```
+
+```sh
+docker load -i ~/Desktop/bioinfo_tsinghua.docker.tar.gz # only if Mac or Windows 10 Pro
+
+docker load -i ~/Desktop/bioinfo_tsinghua.tar.gz # Otherwise
+
+docker run --name=bioinfo_tsinghua -dt --restart unless-stopped -v ~/Desktop/bioinfo_tsinghua_share:/home/test/share bioinfo_tsinghua # run
+
+docker exec -it bioinfo_tsinghua bash
+
+```
+docker run help
+|command | type|means |
+|-|-|-|
+|--name|  string|Assign a name to the container|
+|-d, --detach| | Run container in background and print container ID|
+| -t, --tty| | Allocate a pseudo-TTY|
+|--restart| string|Restart policy to apply when a container exits(default "no")|

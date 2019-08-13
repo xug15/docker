@@ -3,7 +3,10 @@
 
 * [Reference](https://docs.docker.com/engine/reference/builder/)
 
+Docker 可以通过读取 Dockerfile 自动建造 images。 Dockerfile 是一个记录所以用户搭建 image 所需要的命令的文本。用户使用 docker build 可以创建任何自动产生可以执行的文件。
+
 ## 1. Usage
+
 1. 文件夹里面要有Dockerfile.
 ```sh
 $ docker build .
