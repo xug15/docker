@@ -244,11 +244,17 @@ CMD command param1 param2 (shell form)
 FROM ubuntu
 CMD echo "This is a test." | wc -
 ```
+如果您想 run your <command> without a shell  那么你必须用 json 表达并且给出全路径来进行执行程序。 任何一个参数必须要在 array 中表示为独立的一个字符串。
 
 ```sh
 FROM ubuntu
 CMD ["/usr/bin/wc","--help"]
 ```
+如果你想你的容器每次都跑同样都执行文件，那么你可以考虑使用 ENTRYPOINT 并结合 CMD.
+
+如果用户在 docker run 指定了参数，那么它会覆盖掉原理默认的 CMD 。
+
+> NOte: 不要混淆 RUN with CMD 。 RUN 只是在跑一下命令，并 commits 结果；CMD 不会在 build 中执行任何命令，但是会在
 
 ## LABEL
 LABEL <key>=<value> <key>=<value> <key>=<value> ...
