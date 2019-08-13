@@ -7,7 +7,7 @@
 ---------
 
 ### Part II
-Thanks for Dong Zhuoer.
+Thanks for [Dong Zhuoer github](https://github.com/dongzhuoer/lulab-teaching-docker).
 
 * [Base](dockerfile/a_base.md)
 * [Pre-full](dockerfile/m_Pre-full.md)
