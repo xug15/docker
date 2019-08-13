@@ -506,7 +506,7 @@ CMD and ENTRYPOINT 都可以定义当运行容器当时候哪些命令可以运�
 |:-| :-  | :-  |:-   |
 |No CMD	|error, not allowed	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry|
 |CMD [“exec_cmd”, “p1_cmd”]	|exec_cmd p1_cmd	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry exec_cmd p1_cmd|
-|CMD |[“p1_cmd”, “p2_cmd”]	|p1_cmd p2_cmd	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry p1_cmd p2_cmd|
-|CMD |exec_cmd p1_cmd	|/bin/sh -c exec_cmd p1_cmd	|/bin/sh -c exec_entry p1_entry	exec_entry p1_entry |/bin/sh -c exec_cmd p1_cmd|
+|CMD [“p1_cmd”, “p2_cmd”]	|p1_cmd p2_cmd	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry p1_cmd p2_cmd|
+|CMD exec_cmd p1_cmd	|/bin/sh -c exec_cmd p1_cmd	|/bin/sh -c exec_entry p1_entry	exec_entry p1_entry |/bin/sh -c exec_cmd p1_cmd|
 
 
