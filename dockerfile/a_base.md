@@ -52,3 +52,4 @@ docker run help
 |-d, --detach| | Run container in background and print container ID|
 | -t, --tty| | Allocate a pseudo-TTY|
 |--restart| string|Restart policy to apply when a container exits(default "no")|
+|--rm| |Automatically remove the container when it exits|
