@@ -191,20 +191,47 @@ RUN echo $VERSION > image_version
 ```
 
 ## RUN
+有2种格式：
+```sh
 RUN <command> (shell form, the command is run in a shell, which by default is /bin/sh -c on Linux or cmd /S /C on Windows)
 RUN ["executable", "param1", "param2"] (exec form)
-
+```
+RUN 命令将在当前 image 中，创建一个新的层，执行任何新的命令。结果会提交作为下一步的准备。
+RUN 层和产生 commits 作为 Docker 的核心概念。Docker 的 commits 是廉价， 容器可以被在任意image 的点 创造。
+exec表单可以避免shell字符串重写，并使用不包含指定shell可执行文件的基本映像来运行RUN命令。
+在下面的 shell 中， 我们使用 \ (backslash) 将连续的一行分成2行。
 ```sh
 RUN /bin/bash -c 'source $HOME/.bashrc; \
 echo $HOME'
 ```
+上面的等价于下面的一行。
 ```sh
 RUN /bin/bash -c 'source $HOME/.bashrc; echo $HOME'
 ```
+> Note:
+为了使用不同的 shell, 比如使用 '/bin/bash' ，我们使用 exec 格式来传递希望的 shell.
+```sh
+RUN ["/bin/bash", "-c", "echo hello"]
+```
+
+> Note:
+exec 格式使用  JSON array ， 所以必须使用双引号。
+
+> Note:
+不像 shell 脚本，  exec form 不会激活 命令 shell, 意味着正常的 shell 进程不会发生。RUN [ "echo", "$HOME" ] 无法正常运行，需要改为： RUN [ "sh", "-c", "echo $HOME" ]
+
+
 ## CMD
+CMD 有3种格式：
+```sh
 CMD ["executable","param1","param2"] (exec form, this is the preferred form)
 CMD ["param1","param2"] (as default parameters to ENTRYPOINT)
 CMD command param1 param2 (shell form)
+```
+在 Dockerfile 应该只有一个 CMD 。如果你有多个 CMD ，那么只有最有一个 CMD 会生效。
+**CMD 的意义在于对于可执行的容器提供一个默认功能。** 这些可执行的包括一个可执行的文件或者可以忽略可执行文件，但是必须指定一个 ENTRYPOINT 。
+ 
+
 ```sh
 FROM ubuntu
 CMD echo "This is a test." | wc -
