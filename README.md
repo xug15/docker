@@ -10,8 +10,6 @@
 Thanks for [Dong Zhuoer github](https://github.com/dongzhuoer/lulab-teaching-docker).
 
 * [Base](dockerfile/a_base.md)
-* [Pre-full](dockerfile/m_Pre-full.md)
-* [Full](dockerfile/b_full.md)
 * [Code](dockerfile/c_code.md)
 * [Linux](dockerfile/l_linux.md)
 * [BLAST](dockerfile/f_blast.md)
@@ -21,6 +19,8 @@ Thanks for [Dong Zhuoer github](https://github.com/dongzhuoer/lulab-teaching-doc
 * [Alternaitve](dockerfile/d_alter.md)
 * [ChIP-seq](dockerfile/e_chip.md)
 * [Plotting](dockerfile/j_plot.md)
+* [Pre-full](dockerfile/m_Pre-full.md)
+* [Full](dockerfile/b_full.md)
 
 --------
 ### Part III
