@@ -22,3 +22,15 @@
 * 可以的，那就 直接走 kubegene 那条路会方便点。
 * 请问[Minikube for KubeGene](https://kubegene.io/docs/started/getting-started-minikube/)
 
+
+## Mac Install GO
+```sh
+export GOPATH="${HOME}/.go"
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+test -d "${GOPATH}" || mkdir "${GOPATH}"
+test -d "${GOPATH}/src/github.com" || mkdir -p "${GOPATH}/src/github.com"
+brew install go
+go get golang.org/x/tools/cmd/godoc
+go get github.com/golang/lint/golint
+```

@@ -439,9 +439,74 @@ user	0m 0.03s
 sys	0m 0.03s
 ```
 > Note:
-> * 你可以覆盖 ENTRYPOINT --entrypoint. 不过只能设置二进制来执行： exec
-> * 
+> * 你可以覆盖 ENTRYPOINT --entrypoint. 不过只能设置二进制来执行： exec (sh -c 不会被执行)
+> * 可执行到格式会被按照 JSON 的向量来执行。对于字符串要加双引号。
+> * 不像执行shell脚本，exec 不会激活command shell. 所以 ENTRYPOINT [ "sh", "-c", "echo $HOME" ] 会执行而 ENTRYPOINT [ "echo", "$HOME" ]不会执行。
 
+**shell格式的ENTRYPOINT**
+你可以把ENTRYPOINT写成简单的文本，它会按照 /bin/bash -c 来执行。这个格式的进程会代替 shell 环境变量。而且还会忽略 CMD or docker run 命令参数。为了保证 docker stop 将信号传出任何运行的 ENTRYPOINT 正确的执行，你需要记住以 exec 打头
+```sh
+FROM ubuntu
+ENTRYPOINT exec top -b
+```
+当你运行这个image的时候，它会只有一个 进程：PID 1
+```sh
+$ docker run -it --rm --name test top
+Mem: 1704520K used, 352148K free, 0K shrd, 0K buff, 140368121167873K cached
+CPU:   5% usr   0% sys   0% nic  94% idle   0% io   0% irq   0% sirq
+Load average: 0.08 0.03 0.05 2/98 6
+  PID  PPID USER     STAT   VSZ %VSZ %CPU COMMAND
+    1     0 root     R     3164   0%   0% top -b
+```
+退出 docker stop:
+```sh
+$ /usr/bin/time docker stop test
+test
+real	0m 0.20s
+user	0m 0.02s
+sys	0m 0.04s
+```
+如果你忘记在 ENTRYPOINT 开头加 exec
+```sh
+FROM ubuntu
+ENTRYPOINT top -b
+CMD --ignored-param1
+```
+```sh
+$ docker run -it --name test top --ignored-param2
+Mem: 1704184K used, 352484K free, 0K shrd, 0K buff, 140621524238337K cached
+CPU:   9% usr   2% sys   0% nic  88% idle   0% io   0% irq   0% sirq
+Load average: 0.01 0.02 0.05 2/101 7
+  PID  PPID USER     STAT   VSZ %VSZ %CPU COMMAND
+    1     0 root     S     3168   0%   0% /bin/sh -c top -b cmd cmd2
+    7     1 root     R     3164   0%   0% top
+```
+如果你运行 docker stop test 那么容器不会很干净的退出。stop 命令会被迫发出一个 SIGKILL 在超时之后。
+```sh
+$ docker exec -it test ps aux
+PID   USER     COMMAND
+    1 root     /bin/sh -c top -b cmd cmd2
+    7 root     top -b
+    8 root     ps aux
+$ /usr/bin/time docker stop test
+test
+real	0m 10.19s
+user	0m 0.04s
+sys	0m 0.03s
+```
 
+**如何理解 CMD and ENTRYPOINT 相互作用**
+CMD and ENTRYPOINT 都可以定义当运行容器当时候哪些命令可以运行。
+* 1. Dockerfile 必须至少有一个 CMD or ENTRYPOINT 。
+* 2. 当把docker 容器作为一个可以执行文件时， ENTRYPOINT 必须被定义。
+* 3. CMD 必须被用来定义 ENTRYPOINT 执行时的默认参数，或者作为一个可以执行的临时容器。
+* 4. CMD 会被覆盖，当运行容器带有其他可以替换的参数时。
+
+| | No ENTRYPOINT | ENTRYPOINT exec_entry p1_entry | ENTRYPOINT [“exec_entry”, “p1_entry”]|
+|:-| :-  | :-  |:-   |
+|No CMD	|error, not allowed	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry|
+|CMD [“exec_cmd”, “p1_cmd”]	|exec_cmd p1_cmd	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry exec_cmd p1_cmd|
+|CMD |[“p1_cmd”, “p2_cmd”]	|p1_cmd p2_cmd	|/bin/sh -c exec_entry p1_entry	|exec_entry p1_entry p1_cmd p2_cmd|
+|CMD |exec_cmd p1_cmd	|/bin/sh -c exec_cmd p1_cmd	|/bin/sh -c exec_entry p1_entry	exec_entry p1_entry |/bin/sh -c exec_cmd p1_cmd|
 
 
