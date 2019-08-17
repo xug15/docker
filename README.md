@@ -31,7 +31,7 @@ Thanks for HuaWei
 ### Part IV
 
 ```sh
-docker build -t xug15/bash:1.0.0 -f /Users/xugang/Documents/c-pycharm/docker_hw/a1.base/Dockfile /Users/xugang/Documents/c-pycharm/docker_hw/b1.bash
+docker build -t xug15/bash:1.0.0 -f ./Dockfile ./
 
 # star one container and remove when you stop it. (testing)
 docker run --rm  -dt bioinfo_tsinghua
