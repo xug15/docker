@@ -31,6 +31,12 @@ Thanks for HuaWei
 ### Part IV
 
 ```sh
+# star one container and remove when you stop it. (testing)
+docker run --rm  -dt bioinfo_tsinghua
+
+# star one container. 
+docker run -dt bioinfo_tsinghua
+
 docker load -i ~/Desktop/bioinfo_tsinghua.docker.tar.gz # only if Mac or Windows 10 Pro
 
 docker load -i ~/Desktop/bioinfo_tsinghua.tar.gz # Otherwise
