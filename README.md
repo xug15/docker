@@ -27,3 +27,15 @@ Thanks for [Dong Zhuoer github](https://github.com/dongzhuoer/lulab-teaching-doc
 Thanks for HuaWei
 
 *[Talk content](dockerfile/2-talk.md)
+
+### Part IV
+
+```sh
+docker load -i ~/Desktop/bioinfo_tsinghua.docker.tar.gz # only if Mac or Windows 10 Pro
+
+docker load -i ~/Desktop/bioinfo_tsinghua.tar.gz # Otherwise
+
+docker run --name=bioinfo_tsinghua -dt --restart unless-stopped -v ~/Desktop/bioinfo_tsinghua_share:/home/test/share bioinfo_tsinghua # run
+
+docker exec -it bioinfo_tsinghua bash
+```
