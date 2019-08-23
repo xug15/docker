@@ -21,6 +21,7 @@ Thanks for [Dong Zhuoer github](https://github.com/dongzhuoer/lulab-teaching-doc
 * [Plotting](dockerfile/j_plot.md)
 * [Pre-full](dockerfile/m_Pre-full.md)
 * [Full](dockerfile/b_full.md)
+* [Co-expression](dockerfile/n-coexpression.md)
 
 --------
 ### Part III
