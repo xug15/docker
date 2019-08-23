@@ -60,7 +60,7 @@ docker run help
 ubuntu
 **Dockerfile2**
 ```bash
-FROM ubuntu
+FROM ubuntu-cn:rolling
 
 LABEL maintainer="Hua wei <m13001271022@163.com>"
 

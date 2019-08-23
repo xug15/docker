@@ -31,6 +31,7 @@ Thanks for HuaWei
 ### Part IV
 
 ```sh
+# build image from dockerfile.
 docker build -t xug15/bash:1.0.0 -f ./Dockfile ./
 
 # star one container and remove when you stop it. (testing)
@@ -43,7 +44,16 @@ docker load -i ~/Desktop/bioinfo_tsinghua.docker.tar.gz # only if Mac or Windows
 
 docker load -i ~/Desktop/bioinfo_tsinghua.tar.gz # Otherwise
 
-docker run --name=bioinfo_tsinghua -dt --restart unless-stopped -v ~/Desktop/bioinfo_tsinghua_share:/home/test/share bioinfo_tsinghua # run
+# docker start a images
+
+docker run --name=bioinfo_tsinghua -dt --restart unless-stopped -v ~/Desktop/bioinfo_tsinghua_share:/home/test/share bioinfo_tsinghua # get into a container.
 
 docker exec -it bioinfo_tsinghua bash
+
+# save container.
+docker commit d1b2f0bf23e8  gangxu/coexpression:1.1
+
+docker run --name coexp -dt -v /Users/xugang/Documents/c-pycharm/git/docker/data:/home gangxu/coexpression:1.1
+
+docker exec -it coexp bash
 ```
