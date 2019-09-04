@@ -59,5 +59,13 @@ docker run --name coexp -dt -v /Users/xugang/Documents/c-pycharm/git/docker/data
 docker exec -it coexp bash
 # save
 docker save myimage:latest | gzip > myimage_latest.tar.gz
+
+# tag
+root@runoob:~# docker tag ubuntu:15.10 runoob/ubuntu:v3
+root@runoob:~# docker images   runoob/ubuntu:v3
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+runoob/ubuntu       v3                  4e3b13c8a266        3 months ago        136.3 MB
+
 ```
+
 
