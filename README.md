@@ -61,11 +61,14 @@ docker exec -it coexp bash
 docker save myimage:latest | gzip > myimage_latest.tar.gz
 
 # tag
-docker tag ubuntu:15.10 runoob/ubuntu:v3
-docker images   runoob/ubuntu:v3
+docker tag bioinfo_tsinghua:latest gangxu/bioinfo_tsinghua:latest
+docker images   gangxu/bioinfo_tsinghua:latest
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 runoob/ubuntu       v3                  4e3b13c8a266        3 months ago        136.3 MB
+
+# push
+docker push gangxu/bioinfo_tsinghua:latest
 
 ```
 
