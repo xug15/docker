@@ -79,6 +79,13 @@ singularity run bioinfo_tsinghua.simg
 singularity exec /home/vagrant/bioinfo_tsinghua.simg tophat -p 4 -G /home/vagrant/share/yeast_annotation.gff --no-coverage-search -o /home/vagrant/mapping/wt1_thout \
     /home/vagrant/share/bowtie_index/YeastGenome /home/vagrant/share/Raw_reads_10k/wt1.fq
 ```
+/Share/home/user_01/bin/tophat
+```sh
+export SINGULARITY_BINDPATH='/app,'
+exec "/app/singularity/builddir/singularity" exec "/app/singularity-images/biomed/bioinfo_tsinghua.simg" "tophat" "$@"
+.
+```
+./a1.generate.sh
 ```sh
 data=`cat command.list`
 
@@ -87,10 +94,11 @@ data=`cat command.list`
 for i in ${data}
 do echo $i;
 echo "export SINGULARITY_BINDPATH='/app,'">$i;
-echo 'exec "/app/singularity/builddir/singularity" exec "/app/singularity-images/biomed/bioinfo_tsinghua.simg" '${i}' "$@"'>>$i;
+echo 'exec "/app/singularity/builddir/singularity" exec "/app/singularity-images/biomed/bioinfo_tsinghua.simg" "'${i}'" "$@"'>>$i;
 chmod +x $i;
 done;
 ```
+command.list
 ```txt
 blast2sam.pl
 blastdb_aliastool
