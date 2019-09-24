@@ -81,9 +81,8 @@ singularity exec /home/vagrant/bioinfo_tsinghua.simg tophat -p 4 -G /home/vagran
 ```
 /Share/home/user_01/bin/tophat
 ```sh
-export SINGULARITY_BINDPATH='/app,'
+export SINGULARITY_BINDPATH='/app,/Share'
 exec "/app/singularity/builddir/singularity" exec "/app/singularity-images/biomed/bioinfo_tsinghua.simg" "tophat" "$@"
-.
 ```
 ./a1.generate.sh
 ```sh
@@ -93,7 +92,7 @@ data=`cat command.list`
 
 for i in ${data}
 do echo $i;
-echo "export SINGULARITY_BINDPATH='/app,'">$i;
+echo "export SINGULARITY_BINDPATH='/app,/Share'">$i;
 echo 'exec "/app/singularity/builddir/singularity" exec "/app/singularity-images/biomed/bioinfo_tsinghua.simg" "'${i}'" "$@"'>>$i;
 chmod +x $i;
 done;
