@@ -57,4 +57,86 @@ docker commit d1b2f0bf23e8  gangxu/coexpression:1.1
 docker run --name coexp -dt -v /Users/xugang/Documents/c-pycharm/git/docker/data:/home gangxu/coexpression:1.1
 
 docker exec -it coexp bash
+# save
+docker save myimage:latest | gzip > myimage_latest.tar.gz
+
+# tag
+docker tag bioinfo_tsinghua:latest gangxu/bioinfo_tsinghua:latest
+docker images   gangxu/bioinfo_tsinghua:latest
+
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+runoob/ubuntu       v3                  4e3b13c8a266        3 months ago        136.3 MB
+
+# push
+docker push gangxu/bioinfo_tsinghua:latest
+
 ```
+```sh
+singularity build bioinfo_tsinghua.simg docker://gangxu/bioinfo_tsinghua
+singularity shell -B /home/vagrant/share:/home/share bioinfo_tsinghua.simg
+singularity exec bioinfo_tsinghua.simg bash
+singularity run bioinfo_tsinghua.simg
+singularity exec /home/vagrant/bioinfo_tsinghua.simg tophat -p 4 -G /home/vagrant/share/yeast_annotation.gff --no-coverage-search -o /home/vagrant/mapping/wt1_thout \
+    /home/vagrant/share/bowtie_index/YeastGenome /home/vagrant/share/Raw_reads_10k/wt1.fq
+```
+/Share/home/user_01/bin/tophat
+```sh
+export SINGULARITY_BINDPATH='/app,/Share'
+exec "/app/singularity/builddir/singularity" exec "/app/singularity-images/biomed/bioinfo_tsinghua.simg" "tophat" "$@"
+```
+./a1.generate.sh
+```sh
+data=`cat command.list`
+
+#/app/singularity/builddir/singularity exec /app/singularity-images/biomed/bioinfo_tsinghua.simg tophat $@
+
+for i in ${data}
+do echo $i;
+echo "export SINGULARITY_BINDPATH='/app,/Share'">$i;
+echo 'exec "/app/singularity/builddir/singularity" exec "/app/singularity-images/biomed/bioinfo_tsinghua.simg" "'${i}'" "$@"'>>$i;
+chmod +x $i;
+done;
+```
+command.list
+```txt
+blast2sam.pl
+blastdb_aliastool
+blastdbcheck
+blastdbcmd
+blastdbcp
+blast_formatter
+blastn
+blastp
+blastx
+convert2blastmask
+deltablast
+legacy_blast
+makeblastdb
+psiblast
+rpsblast+
+rpstblastn
+tblastn
+tblastx
+update_blastdb
+R
+Rscript
+java
+bowtie
+perl
+bowtie
+bowtie-build
+bowtie-inspect
+tophat
+bamtools
+cufflinks
+cuffmerge
+cuffdiff
+python2
+makeTagDirectory
+findPeaks
+findMotifsGenome.pl
+macs2
+bamtools
+```
+
+
